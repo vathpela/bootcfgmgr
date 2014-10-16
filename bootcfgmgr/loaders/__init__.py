@@ -1,6 +1,6 @@
 
-from ..util import ObjectID
-from .. import parser
+from bootcfgmgr.util import ObjectID
+from bootcfgmgr import parser
 import os
 import importlib
 import logging

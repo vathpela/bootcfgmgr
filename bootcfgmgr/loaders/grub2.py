@@ -1,6 +1,6 @@
 
 
-from . import Loader, register_loader
+from bootcfgmgr.loaders import Loader, register_loader
 
 import logging
 log = logging.getLogger("bootcfgmgr")
