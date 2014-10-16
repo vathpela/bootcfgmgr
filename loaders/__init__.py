@@ -78,7 +78,7 @@ def get_loader_class(loader_type):
 
     return loader
 
-def Loader(ObjectID):
+class Loader(ObjectID):
     """ Generic loader """
 
     _type = None

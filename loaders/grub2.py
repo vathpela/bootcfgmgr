@@ -7,7 +7,7 @@ log = logging.getLogger("bootcfgmgr")
 
 class Grub2(Loader):
     """ GRUB 2 """
-    _type = grub2
+    _type = "grub2"
     _name = None
     _supported = True
 
