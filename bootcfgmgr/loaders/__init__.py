@@ -87,6 +87,7 @@ class Loader(ObjectID):
 
     def __init__(self, **kwargs):
         ObjectID.__init__(self)
+        self.configFileName = None
         self.configFile = None
 
     def __repr__(self):
@@ -119,25 +120,50 @@ class Loader(ObjectID):
     @property
     def compatible(self):
         uname = os.uname()
-        if uname.machine in self.__class__._arches:
+        if uname.machine in self._arches:
             return True
         return False
 
     def find_config(self, configFile=None):
         if configFile is None:
-            for x in self.__class__._config_files:
+            for x in self._config_files:
+                print("x: %s" % (x,))
                 if os.access(x, os.R_OK|os.W_OK):
-                    self.configFile = x
-                    return True
+                    self.configFileName = x
+                    while True:
+                        link = self.configFileName
+                        try:
+                            link = os.readlink(link)
+                            self.configFileName = link
+                        except:
+                            break
+                    break
+        else:
+            if os.access(configFile, os.R_OK|os.W_OK):
+                self.configFileName = configFile
+                while True:
+                    link = self.configFileName
+                    try:
+                        link = os.readlink(link)
+                        self.configFileName = link
+                    except:
+                        break
+            else:
+                sys.stderr.write("Could not access config file \"%s\"\n",
+                                 configFile)
+                raise ValueError(configFile)
+
+        if not self.configFileName:
             return False
 
-        if os.access(configFile, os.R_OK|os.W_OK):
-            self.configFile = configFile
-            return True
-        else:
-            sys.stderr.write("Could not access config file \"%s\"\n",configFile)
-            raise ValueError(configFile)
-        return False
+        buf = open(self.configFileName, "r").read()
+        self.configFile = parser.ConfigFile(buf)
+        return True
 
+    @property
+    def stanzas(self):
+        if not self.configFile:
+            return []
+        return []
 
 collect_loader_classes()
