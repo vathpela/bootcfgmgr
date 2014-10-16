@@ -20,15 +20,16 @@ def parseArguments():
     ap = argparse.ArgumentParser()
 
     ap.add_argument('--version', action='version', version="%(prog)s " + str(version))
-    ap.add_argument('--bootloader', dest="loadername")
-    ap.add_argument('--default-kernel', dest="defaultkernel")
-    ap.add_argument('--config-file', dest='configFile')
+    ap.add_argument('--bootloader', dest="loaderName")
+    ap.add_argument('--default-kernel', dest="defaultKernel", action="store_true")
+    ap.add_argument('-c', '--config-file', dest='configFile')
+    ap.add_argument('--efi', dest='forceEfi', action="store_true")
 
     # these should be last so nothing can register some other argument name
     # as a bootloader name in a plugin.
     for loader in loaders.keys():
         try:
-            ap.add_argument('--%s' % (loader,), dest="loadername", action="store_const", const=loader)
+            ap.add_argument('--%s' % (loader,), dest="loaderName", action="store_const", const=loader)
         except:
             pass
     return ap.parse_args()
@@ -39,13 +40,28 @@ if __name__ == '__main__':
     args = parseArguments()
 
     bl = None
-    if args.loadername:
-        bl = getLoader(args.loadername)
-    if not args.loadername:
+    if args.loaderName:
+        bl = getLoader(args.loaderName)
+    if not args.loaderName:
         for loader in loaders.keys():
             l = getLoader(loader)
+            if hasattr(l, 'forceEfi'):
+                l.forceEfi = True
             if l.compatible and l.find_config(args.configFile):
                 bl = l
                 break
+            del l
     if bl is None:
         log.error("No bootloader type specified and none could be guessed.")
+        sys.exit(1)
+
+    # handle actions we're told to use:
+    if args.defaultKernel:
+        found = False
+        for x in range(0, len(bl.stanzas)):
+            if bl.stanzas[x].default:
+                print("%d", x)
+                found = True
+                break
+        if not found:
+            print("-1")
