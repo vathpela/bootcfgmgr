@@ -1,8 +1,8 @@
 
 from ..util import ObjectID
+from .. import parser
 import os
 import importlib
-import parser
 import logging
 log = logging.getLogger("bootcfgmgr")
 
