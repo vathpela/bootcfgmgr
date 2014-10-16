@@ -1,5 +1,5 @@
 
-from util import ObjectID
+from ..util import ObjectID
 import os
 import importlib
 import parser
@@ -54,7 +54,7 @@ def collect_loader_classes():
                 importlib.invalidate_caches()
                 print("mod_name: %s" % (mod_name,))
                 print("__path__: %s" % (__path__,))
-                globals()[mod_name] = __import__("loaders." + mod_name, globals(), locals(), [], 0)
+                globals()[mod_name] = __import__("bootcfgmgr.loaders." + mod_name, globals(), locals(), [], 0)
 
 def get_loader_class(loader_type):
     """ Return an appropriate loader class.

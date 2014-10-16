@@ -14,7 +14,7 @@ LEFT_PADDING = 8
 RIGHT_PADDING = 8
 DEFAULT_HELP_WIDTH = 80
 
-from loaders import loaders, getLoader
+from bootcfgmgr.loaders import loaders, getLoader
 
 def parseArguments():
     ap = argparse.ArgumentParser()
