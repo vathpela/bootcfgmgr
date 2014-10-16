@@ -22,6 +22,7 @@ def parseArguments():
     ap.add_argument('--version', action='version', version="%(prog)s " + str(version))
     ap.add_argument('--bootloader', dest="loadername")
     ap.add_argument('--default-kernel', dest="defaultkernel")
+    ap.add_argument('--config-file', dest='configFile')
 
     # these should be last so nothing can register some other argument name
     # as a bootloader name in a plugin.
@@ -43,7 +44,7 @@ if __name__ == '__main__':
     if not args.loadername:
         for loader in loaders.keys():
             l = getLoader(loader)
-            if l.compatible() and l.find_config():
+            if l.compatible and l.find_config(args.configFile):
                 bl = l
                 break
     if bl is None:

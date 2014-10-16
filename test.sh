@@ -1,2 +1,2 @@
 #!/bin/bash
-PYTHONPATH=$PWD exec ./tools/bootcfgmgr 
+PYTHONPATH=$PWD exec ./tools/bootcfgmgr --config-file=$PWD/data/grub2-efi.cfg

@@ -82,9 +82,12 @@ class Loader(ObjectID):
     _type = None
     _name = "Unknown"
     _supported = False
+    _arches = []
+    _config_files = []
 
     def __init__(self, **kwargs):
         ObjectID.__init__(self)
+        self.configFile = None
 
     def __repr__(self):
         s = ("%(classname)s instance (%(id)s) object id %(object_id)d--\n"
@@ -112,5 +115,29 @@ class Loader(ObjectID):
     @property
     def type(self):
         return self._type
+
+    @property
+    def compatible(self):
+        uname = os.uname()
+        if uname.machine in self.__class__._arches:
+            return True
+        return False
+
+    def find_config(self, configFile=None):
+        if configFile is None:
+            for x in self.__class__._config_files:
+                if os.access(x, os.R_OK|os.W_OK):
+                    self.configFile = x
+                    return True
+            return False
+
+        if os.access(configFile, os.R_OK|os.W_OK):
+            self.configFile = configFile
+            return True
+        else:
+            sys.stderr.write("Could not access config file \"%s\"\n",configFile)
+            raise ValueError(configFile)
+        return False
+
 
 collect_loader_classes()
